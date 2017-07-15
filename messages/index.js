@@ -1,31 +1,36 @@
-"use strict";
-var builder = require("botbuilder");
-var botbuilder_azure = require("botbuilder-azure");
+'use strict';
+
+var builder = require('botbuilder');
 var path = require('path');
 
-var useEmulator = (process.env.NODE_ENV == 'development');
+require('dotenv').config();
 
-var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
-    appId: process.env['MicrosoftAppId'],
-    appPassword: process.env['MicrosoftAppPassword'],
-    stateEndpoint: process.env['BotStateEndpoint'],
-    openIdMetadata: process.env['BotOpenIdMetadata']
+const Utils = require('./BusinessLogic/Utils');
+const Logic = require('./BusinessLogic/Logic');
+
+var connector = Utils.getConnector(builder);
+
+var bot = new builder.UniversalBot(connector, {
+    localizerSettings: { 
+        defaultLocale: process.env.DEFAULT_LOCALE 
+    }
 });
 
-var bot = new builder.UniversalBot(connector);
 bot.localePath(path.join(__dirname, './locale'));
 
-bot.dialog('/', function (session) {
-    session.send('You said ' + session.message.text);
-});
+//TODO hacerlo proactivo, en cuanto se conecte q me salude y pregunte.
+bot.dialog('/', [
+    Logic.chooseAction,
+    Logic.chooseIndicator,
+    Logic.provideDate,
+    Logic.realizeIntention,
+    (session, results) => {
+        if (!results.response) {
+            session.endConversation(`Hasta la próxima ${session.message.user.name.split(" ", 1)[0]}`);
+        } else {
+            session.replaceDialog('/', { reprompt: true });
+        }
+    }
+]);
 
-if (useEmulator) {
-    var restify = require('restify');
-    var server = restify.createServer();
-    server.listen(3978, function() {
-        console.log('test bot endpont at http://localhost:3978/api/messages');
-    });
-    server.post('/api/messages', connector.listen());    
-} else {
-    module.exports = { default: connector.listen() }
-}
+Utils.startServer(connector);
