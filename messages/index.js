@@ -33,5 +33,4 @@ bot.dialog('/', [
     }
 ]);
 
-//borrar
 Utils.startServer(connector);

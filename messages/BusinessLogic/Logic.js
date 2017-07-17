@@ -25,7 +25,8 @@ module.exports = {
     chooseIndicator(session, results) {
         session.dialogData.opcion = results.response.entity;
         builder.Prompts.choice(session, '¿Cuál de los siguientes indicadores deseas conocer?',
-            Object.values(Utils.Indicators).join('|'),
+            //Object.values(Utils.Indicators).join('|'),
+            Object.keys(Utils.Indicators).map(k => Utils.Indicators[k]),
             { listStyle: builder.ListStyle.list });
     },
     /*
