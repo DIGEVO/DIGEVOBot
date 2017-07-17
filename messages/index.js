@@ -42,7 +42,7 @@ bot.dialog('/', [
     }
 ]);
 
-Utils.startServer(connector);
+module.exports = Utils.startServer(connector);
 // if (process.env.NODE_ENV == 'development') {
 //     var restify = require('restify');
 //     var server = restify.createServer();

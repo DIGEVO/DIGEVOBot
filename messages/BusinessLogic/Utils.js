@@ -19,9 +19,11 @@ module.exports = {
                 console.log('test bot endpont at http://localhost:3978/api/messages');
             });
             server.post('/api/messages', connector.listen());
+            return {};
         } else {
             //module.exports = { default: connector.listen() }
-            this.default = connector.listen();
+            return { default: connector.listen() };
+            //this.default = connector.listen();
             //connector.listen();
         }
     },
