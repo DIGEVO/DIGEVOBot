@@ -6,6 +6,7 @@ const Utils = require('./Utils');
 const RestClient = require('./RestClient');
 
 module.exports = {
+    //TODO verificar el 1er contacto, ver q sea cordial, de lo contrario lanzar frase..., etc.
     /*
     */
     chooseAction(session, results, next) {

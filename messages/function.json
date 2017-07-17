@@ -1,4 +1,5 @@
 {
+  "entryPoint": "index.js",
   "scriptFile": "index.js",
   "disabled": false,
   "bindings": [
