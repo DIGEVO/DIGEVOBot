@@ -21,7 +21,8 @@ module.exports = {
             server.post('/api/messages', connector.listen());
         } else {
             //module.exports = { default: connector.listen() }
-            connector.listen();
+            this.default = connector.listen();
+            //connector.listen();
         }
     },
 
