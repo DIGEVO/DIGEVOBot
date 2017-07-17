@@ -42,14 +42,14 @@ bot.dialog('/', [
     }
 ]);
 
-//Utils.startServer(connector);
-if (process.env.NODE_ENV == 'development') {
-    var restify = require('restify');
-    var server = restify.createServer();
-    server.listen(process.env.PORT, function () {
-        console.log('test bot endpont at http://localhost:3978/api/messages');
-    });
-    server.post('/api/messages', connector.listen());
-} else {
-    module.exports = { default: connector.listen() }
-}
+Utils.startServer(connector);
+// if (process.env.NODE_ENV == 'development') {
+//     var restify = require('restify');
+//     var server = restify.createServer();
+//     server.listen(process.env.PORT, function () {
+//         console.log('test bot endpont at http://localhost:3978/api/messages');
+//     });
+//     server.post('/api/messages', connector.listen());
+// } else {
+//     module.exports = { default: connector.listen() }
+// }
