@@ -9,15 +9,15 @@ require('dotenv').config();
 const Utils = require('./BusinessLogic/Utils');
 const Logic = require('./BusinessLogic/Logic');
 
-//var connector = Utils.getConnector(builder);
-const connector = process.env.NODE_ENV == 'development' ?
+const connector = Utils.getConnector(builder);
+/*const connector = process.env.NODE_ENV == 'development' ?
     new builder.ChatConnector() :
     new botbuilder_azure.BotServiceConnector({
         appId: process.env['MicrosoftAppId'],
         appPassword: process.env['MicrosoftAppPassword'],
         stateEndpoint: process.env['BotStateEndpoint'],
         openIdMetadata: process.env['BotOpenIdMetadata']
-    });
+    });*/
 
 var bot = new builder.UniversalBot(connector, {
     localizerSettings: {
