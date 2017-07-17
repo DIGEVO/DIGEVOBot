@@ -10,14 +10,6 @@ const Utils = require('./BusinessLogic/Utils');
 const Logic = require('./BusinessLogic/Logic');
 
 const connector = Utils.getConnector(builder);
-/*const connector = process.env.NODE_ENV == 'development' ?
-    new builder.ChatConnector() :
-    new botbuilder_azure.BotServiceConnector({
-        appId: process.env['MicrosoftAppId'],
-        appPassword: process.env['MicrosoftAppPassword'],
-        stateEndpoint: process.env['BotStateEndpoint'],
-        openIdMetadata: process.env['BotOpenIdMetadata']
-    });*/
 
 var bot = new builder.UniversalBot(connector, {
     localizerSettings: {
@@ -43,13 +35,3 @@ bot.dialog('/', [
 ]);
 
 module.exports = Utils.startServer(connector);
-// if (process.env.NODE_ENV == 'development') {
-//     var restify = require('restify');
-//     var server = restify.createServer();
-//     server.listen(process.env.PORT, function () {
-//         console.log('test bot endpont at http://localhost:3978/api/messages');
-//     });
-//     server.post('/api/messages', connector.listen());
-// } else {
-//     module.exports = { default: connector.listen() }
-// }

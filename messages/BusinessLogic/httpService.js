@@ -15,10 +15,7 @@ module.exports = {
             const request = http.get(requestOptions, res =>
                 this._onResponse(res, resolve, reject));
 
-            /* if there's an error, then reject the Promise
-             * (can be handled with Promise.prototype.catch) */
             request.on('error', reject);
-
             request.end();
         });
     },

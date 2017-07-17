@@ -41,8 +41,6 @@ module.exports = {
     },
 };
 
-
-
 // var Indicators = {
 //     uf: { name: "uf", startyear: 1977 }                   //Unidad de fomento.
 //     , ivp: { name: "ivp", startyear: 1990 }                 //Indice de valor promedio.

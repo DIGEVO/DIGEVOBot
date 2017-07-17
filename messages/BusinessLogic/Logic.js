@@ -46,8 +46,7 @@ module.exports = {
         } else {
             session.privateConversationData.continue = true;
             if (session.dialogData.opcion == 'Conocer valor de indicador') {
-                RestClient.toKnowValue(
-                    session,
+                RestClient.toKnowValue(session,
                     [() => builder.Prompts.confirm(session, '¿Desea continuar?', { listStyle: builder.ListStyle.button })]);
             } else {
                 session.send(`Trabajando para darte la comparación del valor del indicador **${session.dialogData.indicador}** de la fecha **${session.dialogData.fecha.toDateString()}** con respecto a la fecha actual`);
