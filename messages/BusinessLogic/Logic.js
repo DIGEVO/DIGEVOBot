@@ -49,8 +49,8 @@ module.exports = {
                 RestClient.toKnowValue(session,
                     [() => builder.Prompts.confirm(session, '¿Desea continuar?', { listStyle: builder.ListStyle.button })]);
             } else {
-                session.send(`Trabajando para darte la comparación del valor del indicador **${session.dialogData.indicador}** de la fecha **${session.dialogData.fecha.toDateString()}** con respecto a la fecha actual`);
-                builder.Prompts.confirm(session, '¿Desea continuar?', { listStyle: builder.ListStyle.button });
+                RestClient.toCompareValue(session,
+                    [() => builder.Prompts.confirm(session, '¿Desea continuar?', { listStyle: builder.ListStyle.button })]);
             }
         }
     }

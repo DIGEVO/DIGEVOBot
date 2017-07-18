@@ -4,7 +4,50 @@ const httpService = require('./httpService');
 
 module.exports = {
 
-    toCompareValue(session) { },
+    toCompareValue(session, funs) {
+        const indicador = this._Indicators[session.dialogData.indicador];
+        const fechaAComparar = this._formatDate(session.dialogData.fecha);
+        const hoy = this._formatDate(new Date());
+        const url1 = `http://mindicador.cl/api/${indicador}/${fechaAComparar}`;
+        const url2 = `http://mindicador.cl/api/${indicador}/${hoy}`;
+        //si la fecha a buscar es igual la actual, informar.
+
+        httpService.get(url1)
+            .then(function gotData(data) {
+                var jsonData = JSON.parse(data);
+                return jsonData.serie.length != 0 ? jsonData.serie[0].valor : undefined;
+            })
+            .then(function gotData(valorAComparar) {
+                httpService.get(url2)
+                    .then(function gotData(data) {
+                        const jsonData = JSON.parse(data);
+                        const valorActual = jsonData.serie.length != 0 ? jsonData.serie[0].valor : undefined;
+
+                        if (valorAComparar === undefined && valorActual !== undefined) {
+                            session.send(`Solo existe el valor actual **${valorActual}**, el valor a comparar no está definido`);
+                        } else if (valorAComparar !== undefined && valorActual === undefined) {
+                            session.send(`Solo existe el valor a comparar **${valorAComparar}**, el valor actual no está definido`);
+                        } else if (valorAComparar === undefined && valorActual === undefined) {
+                            session.send('Ninguno de los valores está definido');
+                        } else if (valorAComparar > valorActual) {
+                            //todo incluir valores
+                            session.send('El valor a comparar es mayor');
+                        } else if (valorAComparar < valorActual) {
+                            session.send('El valor actual es mayor');
+                        } else {
+                            session.send('Los valores son iguales');
+                        }
+
+                        funs.forEach(f => f());
+                    })
+                    .catch(function (error) {
+                        session.send(`Lo sentimos, ha ocurrido el sgte error **${error}**`);
+                    });
+            })
+            .catch(function (error) {
+                session.send(`Lo sentimos, ha ocurrido el sgte error **${error}**`);
+            });
+    },
 
     toKnowValue(session, funs) {
         const indicador = this._Indicators[session.dialogData.indicador];
