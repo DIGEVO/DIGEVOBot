@@ -6,7 +6,7 @@ module.exports = {
     getDateWithoutTime: (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()),
 
     greetting(session) {
-        const userLocalTime = new Date(session.message.localTimestamp);
+        const userLocalTime = new Date(session.message.timestamp);
         const hour = userLocalTime.getHours();
         return hour < 12 ? 'buenos días' : hour >= 19 ? 'buenas noches' : 'buenas tardes';
     },
