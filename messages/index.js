@@ -34,4 +34,10 @@ bot.dialog('/', [
     }
 ]);
 
+bot.dialog('/Cancelar', [
+    function (session) {
+        session.endDialog(`No hay problemas ${session.message.user.name.split(" ", 1)[0]}, hasta la próxima.`)
+    }
+]).triggerAction({ matches: /^cancelar$|^salir$|^terminar$|^exit$|^quit$/i });
+
 module.exports = Utils.startServer(connector);
