@@ -49,6 +49,20 @@ module.exports = {
         8: 'Tasa Política Monetaria',
         9: 'Libra de Cobre',
         10: 'Tasa de desempleo'
+    },
+
+    Indicator_Twttr: {
+        0: 'uf',
+        1: 'ivp',
+        2: 'dolar',
+        3: 'dolar intercambio',
+        4: 'euro',
+        5: 'ipc',
+        6: 'utm',
+        7: 'imacec',
+        8: 'tpm',
+        9: 'cobre',
+        10: 'desempleo'
     }
 
 };

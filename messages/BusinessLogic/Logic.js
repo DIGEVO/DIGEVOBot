@@ -24,9 +24,18 @@ module.exports = {
     */
     chooseIndicator(session, results) {
         session.dialogData.opcion = results.response.entity;
-        builder.Prompts.choice(session, '¿Cuál de los siguientes indicadores deseas conocer?',
-            //Object.values(Utils.Indicators).join('|'),
-            Object.keys(Utils.Indicators).map(k => Utils.Indicators[k]),
+        let question;
+        let indicators;
+
+        if (session.message.user.id = 'TwitterChannel') {
+            question = 'Selecione indicador';
+            indicators = Utils.Indicator_Twttr;
+        } else {
+            question = '¿Cuál de los siguientes indicadores deseas conocer?';
+            indicators = Utils.Indicator;
+        }
+        
+        builder.Prompts.choice(session, question, Object.keys(indicators).map(k => indicators[k]),
             { listStyle: builder.ListStyle.list });
     },
     /*
