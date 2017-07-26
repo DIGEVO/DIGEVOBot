@@ -51,7 +51,7 @@ module.exports = {
         10: 'Tasa de desempleo'
     },
 
-    Indicator_Twttr: {
+    Indicators_Twttr: {
         0: 'uf',
         1: 'ivp',
         2: 'dolar',

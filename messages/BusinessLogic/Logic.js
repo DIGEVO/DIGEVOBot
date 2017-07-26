@@ -29,10 +29,10 @@ module.exports = {
 
         if (session.message.user.id == 'TwitterChannel') {
             question = 'Selecione indicador';
-            indicators = Utils.Indicator_Twttr;
+            indicators = Utils.Indicators_Twttr;
         } else {
             question = '¿Cuál de los siguientes indicadores deseas conocer?';
-            indicators = Utils.Indicator;
+            indicators = Utils.Indicators;
         }
 
         builder.Prompts.choice(session, question, Object.keys(indicators).map(k => indicators[k]),
