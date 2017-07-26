@@ -27,14 +27,14 @@ module.exports = {
         let question;
         let indicators;
 
-        if (session.message.user.id = 'TwitterChannel') {
+        if (session.message.user.id == 'TwitterChannel') {
             question = 'Selecione indicador';
             indicators = Utils.Indicator_Twttr;
         } else {
             question = '¿Cuál de los siguientes indicadores deseas conocer?';
             indicators = Utils.Indicator;
         }
-        
+
         builder.Prompts.choice(session, question, Object.keys(indicators).map(k => indicators[k]),
             { listStyle: builder.ListStyle.list });
     },

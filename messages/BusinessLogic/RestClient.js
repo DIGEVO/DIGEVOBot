@@ -80,7 +80,18 @@ module.exports = {
         'Imacec': 'imacec',
         'Tasa Política Monetaria': 'tpm',
         'Libra de Cobre': 'libra_cobre',
-        'Tasa de desempleo': 'tasa_desempleo'
+        'Tasa de desempleo': 'tasa_desempleo',
+        'uf': 'uf',
+        'ivp': 'ivp',
+        'dolar': 'dolar',
+        'dolar intercambio': 'dolar_intercambio',
+        'euro': 'euro',
+        'ipc': 'ipc',
+        'utm': 'utm',
+        'imacec': 'imacec',
+        'tpm': 'tpm',
+        'cobre': 'libra_cobre',
+        'desempleo': 'tasa_desempleo'
     },
 };
 
