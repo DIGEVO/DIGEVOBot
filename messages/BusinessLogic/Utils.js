@@ -54,8 +54,8 @@ module.exports = {
     Indicators_Twttr: {
         0: 'uf',
         1: 'ivp',
-        2: 'dolar',
-        3: 'dolar intercambio',
+        2: 'dólar',
+        3: 'dólar acuerdo',
         4: 'euro',
         5: 'ipc',
         6: 'utm',
