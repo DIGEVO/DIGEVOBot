@@ -19,20 +19,56 @@ var bot = new builder.UniversalBot(connector, {
 
 bot.localePath(path.join(__dirname, './locale'));
 
-//TODO hacerlo proactivo, en cuanto se conecte q me salude y pregunte.
-bot.dialog('/', [
-    Logic.chooseAction,
-    Logic.chooseIndicator,
-    Logic.provideDate,
-    Logic.realizeIntention,
-    (session, results) => {
-        if (!results.response) {
-            session.endConversation(`Hasta la próxima ${session.message.user.name.split(" ", 1)[0]}`);
-        } else {
-            session.replaceDialog('/', { reprompt: true });
-        }
+let luisApp = process.env.LUIS_APP;
+let luisKey = process.env.LUIS_KEY;
+var model = `https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/${luisApp}?subscription-key=${luisKey}&timezoneOffset=0&verbose=true`;
+
+var recognizer = new builder.LuisRecognizer(model);
+//todo esto me dice que puedo usar varias reconocerdores a la vez ;-).
+var dialog = new builder.IntentDialog({ recognizers: [recognizer] });
+
+bot.dialog('/', dialog);
+
+function findAllEntities(entities, pattern) {
+    const result = entities.find(e => e.type.includes(pattern));
+    return result == undefined ? [] : result;
+}
+
+dialog.matches('ConocerIndicador', [
+    function (session, args, next) {
+        console.log('working! 1');
+        //var dates = builder.EntityRecognizer.findAllEntities(args.entities, '*datetime*');
+        const dates = findAllEntities(args.entities, 'datetime');
+
+          console.log(dates);
+        // console.log(args);
     }
 ]);
+
+dialog.matches('CompararIndicador', [
+    function (session, args, next) {
+        console.log('working! 2');
+    }
+]);
+
+dialog.onDefault(builder.DialogAction.send('Disculpa, ' +
+    '¿puede volver a comentarme que deseas hacer?,' +
+    ' por favor, prueba decirlo de otra forma.'));
+
+// //TODO hacerlo proactivo, en cuanto se conecte q me salude y pregunte.
+// bot.dialog('/', [
+//     Logic.chooseAction,
+//     Logic.chooseIndicator,
+//     Logic.provideDate,
+//     Logic.realizeIntention,
+//     (session, results) => {
+//         if (!results.response) {
+//             session.endConversation(`Hasta la próxima ${session.message.user.name.split(" ", 1)[0]}`);
+//         } else {
+//             session.replaceDialog('/', { reprompt: true });
+//         }
+//     }
+// ]);
 
 bot.dialog('/Cancelar', [
     function (session) {
