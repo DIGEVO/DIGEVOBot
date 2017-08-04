@@ -34,13 +34,28 @@ function findAllEntities(entities, pattern) {
     return result == undefined ? [] : result;
 }
 
+function checkIndicator(){
+
+}
+
 dialog.matches('ConocerIndicador', [
     function (session, args, next) {
-        console.log('working! 1');
+      //  console.log('working! 1');
         //var dates = builder.EntityRecognizer.findAllEntities(args.entities, '*datetime*');
         const dates = findAllEntities(args.entities, 'datetime');
+        const indicators = findAllEntities(args.entities, 'indicator');
 
-          console.log(dates);
+        console.log(dates.resolution!= undefined? dates.resolution.values.map(v => v.value):[]);
+
+        console.log(indicators.resolution!= undefined? indicators.resolution.values:[]);
+
+        //todo luego de recoger las salidas de luis,
+        //guardar tanto indicadores como tiempos en el bag del dialog
+        //crear una funciona para cada entidad, 
+        //si hay más de una entidad preguntar cual usa
+        //si solo hay una next
+        //por ultimo llamar a la logica para q me devuelva los valores segun consulta.
+         // console.log(dates);
         // console.log(args);
     }
 ]);
