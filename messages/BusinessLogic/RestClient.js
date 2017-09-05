@@ -1,63 +1,69 @@
 'use strict';
 
 const httpService = require('./httpService');
+const Utils = require('./Utils');
 
 module.exports = {
 
-    toCompareValue(session, funs) {
-        const indicador = this._Indicators[session.dialogData.indicador];
-        const fechaAComparar = this._formatDate(session.dialogData.fecha);
-        const hoy = this._formatDate(new Date());
-        const url1 = `http://mindicador.cl/api/${indicador}/${fechaAComparar}`;
-        const url2 = `http://mindicador.cl/api/${indicador}/${hoy}`;
-        //si la fecha a buscar es igual la actual, informar.
-
-        httpService.get(url1)
+    compareUtil(valueToCompare, session, funs, url2) {
+        httpService.get(url2)
             .then(function gotData(data) {
-                var jsonData = JSON.parse(data);
-                return jsonData.serie.length != 0 ? jsonData.serie[0].valor : undefined;
-            })
-            .then(function gotData(valorAComparar) {
-                httpService.get(url2)
-                    .then(function gotData(data) {
-                        const jsonData = JSON.parse(data);
-                        const valorActual = jsonData.serie.length != 0 ? jsonData.serie[0].valor : undefined;
+                const jsonData = JSON.parse(data);
+                const valueNow = jsonData.serie.length != 0 ? jsonData.serie[0].valor : undefined;
 
-                        if (valorAComparar === undefined && valorActual !== undefined) {
-                            session.send(`Solo existe el valor actual **${valorActual}**, el valor a comparar no está definido`);
-                        } else if (valorAComparar !== undefined && valorActual === undefined) {
-                            session.send(`Solo existe el valor a comparar **${valorAComparar}**, el valor actual no está definido`);
-                        } else if (valorAComparar === undefined && valorActual === undefined) {
-                            session.send('Ninguno de los valores está definido');
-                        } else if (valorAComparar > valorActual) {
-                            //todo incluir valores
-                            session.send('El valor a comparar es mayor');
-                        } else if (valorAComparar < valorActual) {
-                            session.send('El valor actual es mayor');
-                        } else {
-                            session.send('Los valores son iguales');
-                        }
+                if (valueToCompare === undefined && valueNow !== undefined) {
+                    session.send(`Solo existe el valor actual **${valueNow}**, el valor a comparar no está definido`);
+                } else if (valueToCompare !== undefined && valueNow === undefined) {
+                    session.send(`Solo existe el valor a comparar **${valueToCompare}**, el valor actual no está definido`);
+                } else if (valueToCompare === undefined && valueNow === undefined) {
+                    session.send('Ninguno de los valores está definido');
+                } else if (valueToCompare > valueNow) {
+                    session.send(`El valor a comparar **${valueToCompare}** es mayor al actual **${valueNow}**`);
+                } else if (valueToCompare < valueNow) {
+                    session.send(`El valor actual **${valueNow}** es mayor que el valor a comparar **${valueToCompare}**`);
+                } else {
+                    session.send(`Los valores son iguales: **${valueNow}**`);
+                }
 
-                        funs.forEach(f => f());
-                    })
-                    .catch(function (error) {
-                        session.send(`Lo sentimos, ha ocurrido el sgte error **${error}**`);
-                    });
+                funs.forEach(f => f());
             })
             .catch(function (error) {
                 session.send(`Lo sentimos, ha ocurrido el sgte error **${error}**`);
             });
     },
 
+    toCompareValue(session, funs) {
+        const indicator = this._Indicators[session.dialogData.indicator];
+        const dateToCompare = this._formatDate(session.dialogData.date);
+        const today = this._formatDate(Utils.getDateWithoutTime(new Date()));
+        const url1 = `http://mindicador.cl/api/${indicator}/${dateToCompare}`;
+        const url2 = `http://mindicador.cl/api/${indicator}/${today}`;
+
+        if (dateToCompare === today) {
+            session.send('La fecha a comprar es igual al presente día.');
+            module.exports.toKnowValue(session, funs);
+            return;
+        }
+
+        httpService
+            .get(url1)
+            .then((data) => {
+                const jsonData = JSON.parse(data);
+                return jsonData.serie.length != 0 ? jsonData.serie[0].valor : undefined;
+            })
+            .then((valueToCompare) => module.exports.compareUtil(valueToCompare, session, funs, url2))
+            .catch((error) => session.send(`Lo sentimos, ha ocurrido el sgte error **${error}**`));
+    },
+
     toKnowValue(session, funs) {
-        const indicador = this._Indicators[session.dialogData.indicador];
-        const fecha = this._formatDate(session.dialogData.fecha);
-        const url = `http://mindicador.cl/api/${indicador}/${fecha}`;
+        const indicator = this._Indicators[session.dialogData.indicator];
+        const date = this._formatDate(session.dialogData.date);
+        const url = `http://mindicador.cl/api/${indicator}/${date}`;
 
         httpService.get(url)
             .then(function gotData(data) {
                 const result = JSON.parse(data);
-                session.send(`El indicador **${session.dialogData.indicador}** para la fecha **${fecha}** es **${result.serie.length != 0 ? result.serie[0].valor : "No existe valor en la fecha indicada"}**`);
+                session.send(`El indicador **${session.dialogData.indicator}** para la fecha **${date}** es **${result.serie.length != 0 ? result.serie[0].valor : "No existe valor en la fecha indicada"}**`);
                 funs.forEach(f => f());
             })
             .catch(function (error) {

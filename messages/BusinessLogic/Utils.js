@@ -3,7 +3,7 @@
 require('dotenv').config();
 
 module.exports = {
-    getDateWithoutTime: (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    getDateWithoutTime: (date) => new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
 
     greetting(session) {
         const userLocalTime = new Date(session.message.timestamp);
@@ -35,6 +35,19 @@ module.exports = {
                 stateEndpoint: process.env['BotStateEndpoint'],
                 openIdMetadata: process.env['BotOpenIdMetadata']
             });
+    },
+
+    findAllEntities(entities, pattern) {
+        const result = entities.find(e => e.type.includes(pattern));
+        return result == undefined ? [] : result.resolution.values;
+    },
+
+    getLUISModel() {
+        let luisApp = process.env.LUIS_APP;
+        let luisKey = process.env.LUIS_KEY;
+        var model = `https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/${luisApp}?subscription-key=${luisKey}&timezoneOffset=0&verbose=true`;
+
+        return model;
     },
 
     Indicators: {

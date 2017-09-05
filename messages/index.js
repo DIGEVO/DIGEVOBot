@@ -1,17 +1,18 @@
 'use strict';
 
 const botbuilder_azure = require('botbuilder-azure');
-var builder = require('botbuilder');
-var path = require('path');
+const builder = require('botbuilder');
+const path = require('path');
 
 require('dotenv').config();
 
 const Utils = require('./BusinessLogic/Utils');
 const Logic = require('./BusinessLogic/Logic');
+const LUISLogic = require('./BusinessLogic/LUISLogic');
 
 const connector = Utils.getConnector(builder);
 
-var bot = new builder.UniversalBot(connector, {
+const bot = new builder.UniversalBot(connector, {
     localizerSettings: {
         defaultLocale: process.env.DEFAULT_LOCALE
     }
@@ -19,52 +20,24 @@ var bot = new builder.UniversalBot(connector, {
 
 bot.localePath(path.join(__dirname, './locale'));
 
-let luisApp = process.env.LUIS_APP;
-let luisKey = process.env.LUIS_KEY;
-var model = `https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/${luisApp}?subscription-key=${luisKey}&timezoneOffset=0&verbose=true`;
+const recognizer = new builder.LuisRecognizer(Utils.getLUISModel());
+const dialog = new builder.IntentDialog({ recognizers: [recognizer] });
 
-var recognizer = new builder.LuisRecognizer(model);
-//todo esto me dice que puedo usar varias reconocerdores a la vez ;-).
-var dialog = new builder.IntentDialog({ recognizers: [recognizer] });
-
+//TODO ver la forma de cambiar el mensaje antes de q entre al dialogo(middleware).
 bot.dialog('/', dialog);
 
-function findAllEntities(entities, pattern) {
-    const result = entities.find(e => e.type.includes(pattern));
-    return result == undefined ? [] : result;
-}
+const waterfall = [
+    LUISLogic.begingTheFeed,
+    LUISLogic.checkIndicator,
+    LUISLogic.saveIndicator,
+    LUISLogic.checkDate,
+    LUISLogic.saveDate,
+    LUISLogic.realizeIntention
+];
 
-function checkIndicator(){
+dialog.matches('ConocerIndicador', waterfall);
 
-}
-
-dialog.matches('ConocerIndicador', [
-    function (session, args, next) {
-      //  console.log('working! 1');
-        //var dates = builder.EntityRecognizer.findAllEntities(args.entities, '*datetime*');
-        const dates = findAllEntities(args.entities, 'datetime');
-        const indicators = findAllEntities(args.entities, 'indicator');
-
-        console.log(dates.resolution!= undefined? dates.resolution.values.map(v => v.value):[]);
-
-        console.log(indicators.resolution!= undefined? indicators.resolution.values:[]);
-
-        //todo luego de recoger las salidas de luis,
-        //guardar tanto indicadores como tiempos en el bag del dialog
-        //crear una funciona para cada entidad, 
-        //si hay más de una entidad preguntar cual usa
-        //si solo hay una next
-        //por ultimo llamar a la logica para q me devuelva los valores segun consulta.
-         // console.log(dates);
-        // console.log(args);
-    }
-]);
-
-dialog.matches('CompararIndicador', [
-    function (session, args, next) {
-        console.log('working! 2');
-    }
-]);
+dialog.matches('CompararIndicador', waterfall);
 
 dialog.onDefault(builder.DialogAction.send('Disculpa, ' +
     '¿puede volver a comentarme que deseas hacer?,' +
