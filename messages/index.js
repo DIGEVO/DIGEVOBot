@@ -43,25 +43,9 @@ dialog.onDefault(builder.DialogAction.send('Disculpa, ' +
     '¿puede volver a comentarme que deseas hacer?,' +
     ' por favor, prueba decirlo de otra forma.'));
 
-// //TODO hacerlo proactivo, en cuanto se conecte q me salude y pregunte.
-// bot.dialog('/', [
-//     Logic.chooseAction,
-//     Logic.chooseIndicator,
-//     Logic.provideDate,
-//     Logic.realizeIntention,
-//     (session, results) => {
-//         if (!results.response) {
-//             session.endConversation(`Hasta la próxima ${session.message.user.name.split(" ", 1)[0]}`);
-//         } else {
-//             session.replaceDialog('/', { reprompt: true });
-//         }
-//     }
-// ]);
-
 bot.dialog('/Cancelar', [
-    function (session) {
+    (session) =>
         session.endDialog(`No hay problemas ${session.message.user.name.split(" ", 1)[0]}, hasta la próxima.`)
-    }
 ]).triggerAction({ matches: /^cancelar$|^salir$|^terminar$|^exit$|^quit$/i });
 
 module.exports = Utils.startServer(connector);
